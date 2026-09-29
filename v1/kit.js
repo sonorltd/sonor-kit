@@ -2,12 +2,12 @@
 // (B-485 Spine v1.4: shared code is SERVED, not copied.) Loads the kit CSS into the `sonor-kit` cascade layer (the app's own
 // unlayered rules always win), then the modules in dependency order as classic scripts (they are IIFE masters that define
 // window globals), and exposes window.SonorKit = { version, base, ready }. Local dev: ?kit=local on the page URL, or
-// <script … data-kit-base="../sonor-kit/kit/v1/">, points at the workspace folder instead of the channel.
+// <script … data-kit-base="../sonor-kit/v1/">, points at the workspace folder instead of the channel.
 const here = new URL(import.meta.url);
 const params = new URLSearchParams(location.search);
 const scriptEl = document.currentScript || Array.from(document.scripts).find((s) => /kit\.js(\?|$)/.test(s.src));
 let base = (scriptEl && scriptEl.dataset && scriptEl.dataset.kitBase) || here.href.replace(/kit\.js(\?.*)?$/, '');
-if (params.get('kit') === 'local') base = new URL('../../sonor-kit/kit/v1/', location.href).href;
+if (params.get('kit') === 'local') base = new URL('../../sonor-kit/v1/', location.href).href;
 const manifest = await (await fetch(base + 'manifest.json', { cache: 'no-cache' })).json();
 const style = document.createElement('style'); style.id = 'sonor-kit-css';
 style.textContent = `@import url("${base}kit.css") layer(sonor-kit);`;

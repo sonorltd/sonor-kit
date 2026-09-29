@@ -1,9 +1,9 @@
 # sonor-kit — Project Notes
 
-**Current version: v0.3.0** (kit/v1/manifest.json) · Spine v1.4 (B-485 cohesion plan: `../reports/COHESION-PLAN_2026-09-29.md`).
+**Current version: v0.3.0** (v1/manifest.json) · Spine v1.4 (B-485 cohesion plan: `../reports/COHESION-PLAN_2026-09-29.md`).
 
 ## What this is
-The served UI kit. Masters born here live in `src/`; masters still at the workspace root are pulled by `build-kit.sh` until cohesion step 2. Apps load `kit/v1/kit.js` (see README). The catalogue (`catalogue/`) is the living style guide — **read it before building UI in any app**; a pattern needed by a second app is promoted here first (S-4.22), never copied.
+The served UI kit. Masters born here live in `src/`; masters still at the workspace root are pulled by `build-kit.sh` until cohesion step 2. Apps load `v1/kit.js` (see README). The catalogue (`catalogue/`) is the living style guide — **read it before building UI in any app**; a pattern needed by a second app is promoted here first (S-4.22), never copied.
 
 ## Laws
 - BACKUP-FIRST, MODULAR-FIRST, no WeQuote writes from the browser — as the workspace.
@@ -24,4 +24,8 @@ The served UI kit. Masters born here live in `src/`; masters still at the worksp
 |---|---|---|
 | 0.3.0 | 2026-09-29 | `sonor-theme.js` + components.css v0.10.0 graphite aliases / re-tints; root `sonor-header.css` safety net scoped to `:root:not([data-theme])` (it was overriding every theme's text tokens). |
 | 0.2.0 | 2026-09-29 | `sonor-rack-calc.js` (rack numbers, shared by Engineering / PM / PDF); slot-grid `labels=none` + `flush` for host frames. |
-| 0.1.0 | 2026-09-29 | Kit born: loader (`kit/v1/kit.js`, manifest, layered CSS, `?kit=local`), `build-kit.sh`, reusable CI, catalogue index + slot-grid demo, `<sonor-slot-grid>` v0.1.0 (B-484 tranche 1). |
+| 0.1.0 | 2026-09-29 | Kit born: loader (`v1/kit.js`, manifest, layered CSS, `?kit=local`), `build-kit.sh`, reusable CI, catalogue index + slot-grid demo, `<sonor-slot-grid>` v0.1.0 (B-484 tranche 1). |
+
+
+## 2026-09-29 · path fix
+Served tree lives at `v1/` (repo root) — Pages serves `https://sonorltd.github.io/sonor-kit/v1/kit.js`. `kit/v1/` was wrong and is parked in `_to_delete_kit_dir` (delete it). `ci.yml` checks `v1/manifest.json`. Pages must be enabled (main, /) and the repo public or on a Pages plan — until then every consumer silently falls back to its `data/` copies.
