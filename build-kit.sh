@@ -16,6 +16,7 @@ for m in "${MODULES[@]}"; do pull "$m" "$OUT/modules/$m"; done
 # catalogue local copies (so ../src/* references work when served from the repo)
 for m in sonor-icons.js; do [[ -f "src/$m" ]] || cp "$ROOT/$m" "src/$m"; done
 cp "$ROOT/data/sonor-components.css" src/sonor-components.css; cp "$ROOT/Branding - CORE/dist/brand.css" src/brand.css
+cp "$ROOT/Branding - CORE/dist/sonor-vocab.css" "$OUT/vocab.css"; cp "$ROOT/Branding - CORE/dist/sonor-vocab.css" src/sonor-vocab.css   # §14 vocab layer, served unlayered next to the modules
 node -e "
 const fs=require('fs'); const mods=process.argv.slice(1); fs.writeFileSync('$OUT/manifest.json', JSON.stringify({ version: '$VERSION', built: new Date().toISOString(), modules: mods, css: 'kit.css' }, null, 2));" "${MODULES[@]}"
 echo "kit v$VERSION → $OUT ($(ls "$OUT/modules" | wc -l | tr -d ' ') modules)"

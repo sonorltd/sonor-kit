@@ -1,0 +1,8 @@
+<!doctype html><html data-theme="graphite"><head><meta charset="utf-8"><link rel="stylesheet" href="../../src/brand.css"><link rel="stylesheet" href="../../src/sonor-components.css">
+<script>window.__writes=[];window.SonorDB={client:{from:(t)=>({update:(p)=>({eq:(c,v)=>{window.__writes.push(t+' '+c+'='+v+' '+JSON.stringify(p));return Promise.resolve({error:null});}})})}};</script>
+<script src="../../src/sonor-sortable.js"></script></head>
+<body style="padding:20px;background:var(--bg-0)"><table><tbody data-sortable="demo_rows" data-sort-col="sort_order" data-sort-id="key">
+<tr data-id="a" data-sort="10"><td></td><td>Alpha</td></tr><tr data-id="b" data-sort="20"><td></td><td>Bravo</td></tr><tr data-id="c" data-sort="30"><td></td><td>Charlie</td></tr>
+</tbody></table><div id="late"></div>
+<script>setTimeout(()=>{document.getElementById('late').innerHTML='<div data-sortable="late_cards" data-sort-axis="grid"><div data-id="x" data-sort="10" style="display:inline-block;width:80px;height:40px;background:var(--bg-2);margin:4px">x</div><div data-id="y" data-sort="20" style="display:inline-block;width:80px;height:40px;background:var(--bg-2);margin:4px">y</div></div>';},200);</script>
+</body></html>

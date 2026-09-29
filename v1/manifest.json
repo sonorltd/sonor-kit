@@ -1,6 +1,6 @@
 {
-  "version": "0.6.0",
-  "built": "2026-09-29T21:44:02.592Z",
+  "version": "0.6.2",
+  "built": "2026-09-29T22:20:55.864Z",
   "modules": [
     "sonor-theme.js",
     "sonor-icons.js",

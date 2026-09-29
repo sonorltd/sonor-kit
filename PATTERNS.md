@@ -14,3 +14,5 @@ Read before building UI. If the pattern you need is here, use the component. If 
 | Private client link | `client_docs` + `doc` edge fn + landing page | token, revocable, view-counted |
 | Live data | Supabase realtime on the table the view reads; debounce 400 ms | the WQ bar is the reference |
 | Bars under the header (project bar, tabs, filters, stats) | `.s-bar-2/3/4` tokens + `SonorTheme.ladder()` (theme.js ≥ 0.3.0) | steps are assigned by POSITION at boot — never hand-pick a bar colour; `data-bar-fixed` to opt a bar out |
+| Hover / active / focus on any control | kit §18 rules (components.css ≥ 0.17.0) | never add an app `:hover` transform/shadow/opacity or an inline onmouseover — the kit already does it |
+| Text or glyph on a computed fill (service colour, status hex) | `sonorInkFor(colour)` (sonor-app.js) | dark on bright fills, white on deep — never hard-code `#fff` |

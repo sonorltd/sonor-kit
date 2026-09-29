@@ -15,16 +15,17 @@
  *        SonorTheme.ladder() — re-run the bar ladder (v0.3.0)
  *   Event: document 'sonor:theme' { theme }
  *
- *   v0.3.0 (sonor-platform §9, 2026-09-29 — Bryn on Packs: "still doesn't look right"): THE BAR LADDER IS POSITIONAL.
+ *   v0.3.0/0.3.1 (sonor-platform §9, 2026-09-29 — Bryn: "still doesn't look right… get this right everywhere"): THE BAR LADDER IS POSITIONAL.
  *   Every full-width bar under the shared header takes the next step (--bar-2 → --bar-3 → --bar-4) in VISUAL order, whatever
  *   its role — a project bar above the tab bar is step 2, the tab bar below it step 3. Before this the steps were bound to
  *   roles (.tab-bar = 2, project bar = 3) so any app that stacks project-bar-first rendered the ladder inverted, with the
- *   tab bar sinking into the page background. Candidates: .tab-bar, .sonor-project-bar, .s-bar-2/3/4, [data-bar]; opt out
- *   of the pass with data-bar-fixed. Applied as inline background so it wins over per-module injected CSS.
+ *   tab bar sinking into the page background. v0.3.1: candidates are found by SHAPE (full-width opaque strips under the header)
+ *   so app-named bars (.project-bar, .tabbar, .set-nav, .portal-subhead…) are covered without listing them; [data-bar] opts a
+ *   narrower strip in, data-bar-fixed opts out. Applied as inline background so it wins over per-module injected CSS.
  */
 (function (global) {
   'use strict';
-  var VERSION = '0.3.0';
+  var VERSION = '0.3.2';
   var KEY = 'sonor-theme', COOKIE = 'sonor_theme';
   var DARK = 'graphite', LIGHT = 'slate';
   var doc = global.document; if (!doc) { global.SonorTheme = { VERSION: VERSION }; return; }
@@ -81,14 +82,24 @@
   function ladder() {
     try {
       var vw = doc.documentElement.clientWidth || global.innerWidth || 0; if (!vw) return;
-      var head = doc.querySelector('#sonor-header, .header, .sonor-shell-header'); var top0 = head ? head.getBoundingClientRect().bottom + global.scrollY : 0;
-      var els = Array.prototype.slice.call(doc.querySelectorAll('.tab-bar, .sonor-project-bar, .s-bar-2, .s-bar-3, .s-bar-4, [data-bar]'))
-        .filter(function (el) { if (el.hasAttribute('data-bar-fixed') || (head && head.contains(el))) return false; var r = el.getBoundingClientRect(); return r.width >= vw * 0.6 && r.height >= 18 && r.height <= 120 && getComputedStyle(el).display !== 'none'; })
+      var head = doc.querySelector('#sonor-header, .header, .sonor-shell-header, body > header'); var top0 = head ? head.getBoundingClientRect().bottom + global.scrollY : 0;
+      var opaque = function (el) { var m = (getComputedStyle(el).backgroundColor || '').match(/[\d.]+/g); return !!m && (m[3] === undefined || +m[3] >= 0.5); };
+      // v0.3.1 — bars are found by SHAPE, not by class: any full-width opaque strip stacked under the header
+      // (left ≤ 8px, width ≥ 95vw, 18–120px tall, within 320px of the header) — plus anything that opts in with [data-bar].
+      // Inset panels (canvas toolbars, banners with margins) are not bars. Nested strips collapse into their outer bar.
+      var all = Array.prototype.slice.call(doc.querySelectorAll('body *')).filter(function (el) {
+        if (el.hasAttribute('data-bar-fixed') || (head && head.contains(el)) || el.closest('.s-paper,[data-bar-fixed],script,style,select,svg')) return false;
+        var cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || cs.position === 'fixed' && !el.hasAttribute('data-bar')) return false;
+        var r = el.getBoundingClientRect(); var top = r.top + global.scrollY;
+        if (top < top0 - 2 || top > top0 + 320 || r.height < 18 || r.height > 120) return false;
+        if (el.hasAttribute('data-bar')) return r.width >= vw * 0.6 && opaque(el);
+        return r.left <= 8 && r.width >= vw * 0.95 && opaque(el);
+      });
+      var outer = all.filter(function (el) { return !all.some(function (o) { return o !== el && o.contains(el); }); })
         .map(function (el) { return { el: el, top: el.getBoundingClientRect().top + global.scrollY }; })
-        .filter(function (x) { return x.top >= top0 - 2 && x.top < top0 + 400; })
         .sort(function (a, b) { return a.top - b.top; });
       var step = 0, lastTop = -1;
-      els.forEach(function (x) { if (Math.abs(x.top - lastTop) > 2) { if (lastTop >= 0) step = Math.min(step + 1, STEPS.length - 1); lastTop = x.top; }
+      outer.forEach(function (x) { if (Math.abs(x.top - lastTop) > 2) { if (lastTop >= 0) step = Math.min(step + 1, STEPS.length - 1); lastTop = x.top; }
         x.el.setAttribute('data-bar-step', String(step + 2)); x.el.style.background = 'var(' + STEPS[step] + ')'; x.el.style.borderBottom = '1px solid var(--bar-line, rgba(255,255,255,.08))'; });
     } catch (_) {}
   }

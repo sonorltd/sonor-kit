@@ -1,0 +1,26 @@
+sonor-master|index.html
+sonor-master|board.html
+sonor-master|business-snapshot.html
+sonor-master|subcontractors.html
+sonor-master|health.html
+sonor-master|audit-snapshot.html
+sonor-master|manufacturers.html
+sonor-master|email-templates.html
+sonor-master|landing-pages.html
+APP - Leads|dashboard/sonor-leads.html
+APP - Accounts|dashboard/sonor-accounts.html
+APP - Project Master|sonor-project-master.html
+APP - Project Master|brief.html
+APP - Packs|dashboard/sonor-packs.html
+APP - Portal|dashboard/sonor-portal.html
+APP - Takeoffs|sonor-takeoffs.html
+APP - Inventory|dashboard/sonor-inventory.html
+APP - Library|sonor-library.html
+APP - Tasks|sonor-tasks.html
+APP - Follow-Up Portal|dashboard/sonor-followup.html
+APP - Print & Workwear|dashboard/sonor-print-workwear.html
+sonor-workshop|dashboard/sonor-workshop.html
+APP - Tender|sonor-tender.html
+APP - Service Contracts|dashboard/sonor-service-contracts.html
+APP - C-Bus|index.html
+APP - Cinema Takeoff|index.html

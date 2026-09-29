@@ -1,6 +1,6 @@
 # sonor-kit — Project Notes
 
-**Current version: v0.6.0** (v1/manifest.json) · Spine v1.4 (B-485 cohesion plan: `../reports/COHESION-PLAN_2026-09-29.md`).
+**Current version: v0.6.2** (v1/manifest.json) · Spine v1.4 (B-485 cohesion plan: `../reports/COHESION-PLAN_2026-09-29.md`).
 
 ## What this is
 The served UI kit. Masters born here live in `src/`; masters still at the workspace root are pulled by `build-kit.sh` until cohesion step 2. Apps load `v1/kit.js` (see README). The catalogue (`catalogue/`) is the living style guide — **read it before building UI in any app**; a pattern needed by a second app is promoted here first (S-4.22), never copied.
@@ -23,6 +23,7 @@ The served UI kit. Masters born here live in `src/`; masters still at the worksp
 ## Changelog
 | v | date | change |
 |---|---|---|
+| 0.6.2 | 2026-09-29 | `sonor-theme.js` v0.3.2 — ladder finds bars by SHAPE (full-width opaque strips under the header; nested collapse; `body > header` counts as the header for own-chrome apps like C-Bus); `data/sonor-components.css` v0.17.0 **§18 hover/focus law** (one wash, no lifts, focus ring, reduced-motion); `.s-paper` now re-declares `--ink-mix` / `--ink-on-bright`; `tests/contrast.mjs` skips `[data-decorative]` / `[aria-hidden]`. Spec sweep over 26 pages (session log). |
 | 0.6.0 | 2026-09-29 | `sonor-theme.js` v0.3.0 — **positional bar ladder** (`SonorTheme.ladder()`, sonor-platform §9): full-width bars under the header take --bar-2/3/4 in visual order (inline background), `data-bar-fixed` opts out. Cause: Packs stacks project-bar-first and rendered the ladder inverted (Bryn 22:39 "still doesn't look right"). New gate `tests/ladder.smoke.mjs` (fails if any bar is not lighter than the one above). Also `data/sonor-header.css` ≤480px phone rules (synced, not in kit.css). |
 | 0.5.0 | 2026-09-29 | FRAMEWORK ROUND (Bryn: "not patches"): `v1/vocab.css` (generated from brand-core `<vocab>`, injected by `sonor-theme.js` v0.2.0 — every app colour name → token, every theme; per-app graphite blocks and the header-css hand bridge deleted); `sonor-sortable.js` v0.2.0 declarative `[data-sortable]` + client resolver + persist + MutationObserver; components.css v0.16.0 `.s-pill` family. Smoke covers declarative mode. |
 | 0.4.1 | 2026-09-29 | `tests/contrast.mjs` — the contrast + bar-ladder gate (sonor-platform §13); components.css v0.15.0 `.s-paper`, `--ink-mix`, `--ink-on-bright`; `sonor-project-bar.js` on `--surface-text` / ladder tokens (its `--body` ink was invisible in graphite); `sonor-wq-bar.js` v1.4.4 menu ink + slot chip tokenised. |

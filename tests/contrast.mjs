@@ -23,7 +23,7 @@ for (const u of urls) {
     const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n;
     while ((n = w.nextNode())) {
       const t = n.textContent.trim(); if (t.length < 2) continue; const el = n.parentElement; if (!el || seen.has(el)) continue; seen.add(el);
-      if (el.closest('script,style,option,[hidden],[data-csv-tool],[data-sort-input]')) continue;
+      if (el.closest('script,style,option,[hidden],[data-csv-tool],[data-sort-input],[data-decorative],[aria-hidden="true"]')) continue;
       const cs = getComputedStyle(el); if (cs.visibility === 'hidden' || cs.display === 'none') continue;
       const r = el.getBoundingClientRect(); if (r.width < 4 || r.height < 4 || r.bottom < 0 || r.top > 950 || r.right < 0) continue;
       let op = 1; for (let e = el; e; e = e.parentElement) op *= +getComputedStyle(e).opacity; if (op < 0.05) continue; // hidden modals
