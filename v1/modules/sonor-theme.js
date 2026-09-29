@@ -12,14 +12,23 @@
  *   follows you across apps). A ◐ toggle mounts itself into the shared header (.header-right) or project bar when present.
  *
  *   API: SonorTheme.get() → 'graphite'|'slate'|…  SonorTheme.set(name)  SonorTheme.toggle()  SonorTheme.mount(host)
+ *        SonorTheme.ladder() — re-run the bar ladder (v0.3.0)
  *   Event: document 'sonor:theme' { theme }
+ *
+ *   v0.3.0 (sonor-platform §9, 2026-09-29 — Bryn on Packs: "still doesn't look right"): THE BAR LADDER IS POSITIONAL.
+ *   Every full-width bar under the shared header takes the next step (--bar-2 → --bar-3 → --bar-4) in VISUAL order, whatever
+ *   its role — a project bar above the tab bar is step 2, the tab bar below it step 3. Before this the steps were bound to
+ *   roles (.tab-bar = 2, project bar = 3) so any app that stacks project-bar-first rendered the ladder inverted, with the
+ *   tab bar sinking into the page background. Candidates: .tab-bar, .sonor-project-bar, .s-bar-2/3/4, [data-bar]; opt out
+ *   of the pass with data-bar-fixed. Applied as inline background so it wins over per-module injected CSS.
  */
 (function (global) {
   'use strict';
-  var VERSION = '0.1.0';
+  var VERSION = '0.3.0';
   var KEY = 'sonor-theme', COOKIE = 'sonor_theme';
   var DARK = 'graphite', LIGHT = 'slate';
   var doc = global.document; if (!doc) { global.SonorTheme = { VERSION: VERSION }; return; }
+  if (global.SonorTheme && global.SonorTheme.set) return;   // v0.2.0 — the local boot copy (data/sonor-theme.js) already ran; the served one is additive
   var html = doc.documentElement;
   var locked = html.hasAttribute('data-theme-lock');
 
@@ -53,9 +62,42 @@
     }, 250);
   }
 
+  // v0.2.0 (sonor-platform §14) — the VOCAB layer: every app colour name → brand token, one generated file, every theme.
+  // Injected right after this script so it sits after brand.css and, being unlayered `html[data-theme]`, beats any
+  // leftover app palette. Served: ../vocab.css next to the modules; offline copy: data/sonor-vocab.css beside this file.
+  (function injectVocab() {
+    try {
+      if (doc.getElementById('sonor-vocab-css')) return;
+      var me = doc.currentScript || (function () { var ss = doc.getElementsByTagName('script'); for (var i = ss.length - 1; i >= 0; i--) if (/sonor-theme\.js/.test(ss[i].src)) return ss[i]; })();
+      var src = me && me.src ? me.src : ''; if (!src) return;
+      var href = /\/modules\/sonor-theme\.js/.test(src) ? src.replace(/\/modules\/sonor-theme\.js.*$/, '/vocab.css') : src.replace(/sonor-theme\.js.*$/, 'sonor-vocab.css');
+      var l = doc.createElement('link'); l.id = 'sonor-vocab-css'; l.rel = 'stylesheet'; l.href = href;
+      (me && me.parentNode ? me.parentNode : doc.head).insertBefore(l, me ? me.nextSibling : null);
+    } catch (_) {}
+  })();
+
+  // v0.3.0 — positional bar ladder (see header comment). Runs after DOM ready + a few late ticks (project bar / shell mount async).
+  var STEPS = ['--bar-2', '--bar-3', '--bar-4'];
+  function ladder() {
+    try {
+      var vw = doc.documentElement.clientWidth || global.innerWidth || 0; if (!vw) return;
+      var head = doc.querySelector('#sonor-header, .header, .sonor-shell-header'); var top0 = head ? head.getBoundingClientRect().bottom + global.scrollY : 0;
+      var els = Array.prototype.slice.call(doc.querySelectorAll('.tab-bar, .sonor-project-bar, .s-bar-2, .s-bar-3, .s-bar-4, [data-bar]'))
+        .filter(function (el) { if (el.hasAttribute('data-bar-fixed') || (head && head.contains(el))) return false; var r = el.getBoundingClientRect(); return r.width >= vw * 0.6 && r.height >= 18 && r.height <= 120 && getComputedStyle(el).display !== 'none'; })
+        .map(function (el) { return { el: el, top: el.getBoundingClientRect().top + global.scrollY }; })
+        .filter(function (x) { return x.top >= top0 - 2 && x.top < top0 + 400; })
+        .sort(function (a, b) { return a.top - b.top; });
+      var step = 0, lastTop = -1;
+      els.forEach(function (x) { if (Math.abs(x.top - lastTop) > 2) { if (lastTop >= 0) step = Math.min(step + 1, STEPS.length - 1); lastTop = x.top; }
+        x.el.setAttribute('data-bar-step', String(step + 2)); x.el.style.background = 'var(' + STEPS[step] + ')'; x.el.style.borderBottom = '1px solid var(--bar-line, rgba(255,255,255,.08))'; });
+    } catch (_) {}
+  }
+  function ladderLater() { if (locked) return; ladder(); [300, 1000, 2500, 5000].forEach(function (ms) { setTimeout(ladder, ms); }); }
+  doc.addEventListener('sonor:theme', function () { setTimeout(ladder, 0); });
+
   // apply the remembered theme NOW (before first paint when loaded in <head>)
   if (!locked) { var s = stored(); if (s && s !== get()) set(s, { silent: true }); else html.style.colorScheme = get() === DARK ? 'dark' : 'light'; }
-  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', autoMount); else autoMount();
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', function () { autoMount(); ladderLater(); }); else { autoMount(); ladderLater(); }
 
-  global.SonorTheme = { VERSION: VERSION, get: get, set: set, toggle: toggle, mount: mount, DARK: DARK, LIGHT: LIGHT };
+  global.SonorTheme = { VERSION: VERSION, get: get, set: set, toggle: toggle, mount: mount, ladder: ladder, DARK: DARK, LIGHT: LIGHT };
 })(typeof window !== 'undefined' ? window : globalThis);

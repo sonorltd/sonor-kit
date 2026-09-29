@@ -13,3 +13,4 @@ Read before building UI. If the pattern you need is here, use the component. If 
 | Empty / loading | `.s-empty`, `.s-skeleton*` | never a blank panel |
 | Private client link | `client_docs` + `doc` edge fn + landing page | token, revocable, view-counted |
 | Live data | Supabase realtime on the table the view reads; debounce 400 ms | the WQ bar is the reference |
+| Bars under the header (project bar, tabs, filters, stats) | `.s-bar-2/3/4` tokens + `SonorTheme.ladder()` (theme.js ≥ 0.3.0) | steps are assigned by POSITION at boot — never hand-pick a bar colour; `data-bar-fixed` to opt a bar out |
