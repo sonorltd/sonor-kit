@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="slate">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sonor Kit — catalogue</title>
+<!-- The living catalogue (B-485 §4): every shared component with a live demo, its usage line and which apps use it.
+     Served from the sonor-kit repo (GitHub Pages). Pages under catalogue/ load the masters from ../src. -->
+<link rel="stylesheet" href="../src/brand.css"><link rel="stylesheet" href="../src/sonor-components.css">
+<script src="../src/sonor-icons.js"></script>
+<style>
+  body{margin:0;background:var(--bg-1,#DDE1E7);color:var(--text-primary,#1A1F28);font:14px/1.5 var(--font-ui,'DM Sans',system-ui,sans-serif)}
+  .page{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+  h1{font-size:var(--fs-2xl,26px);margin:0 0 4px}.lede{color:var(--text-secondary,#475161);max-width:760px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:22px}
+  .card{background:var(--card,#fff);border:1px solid var(--border,#CBD5E1);border-radius:var(--r-lg,8px);padding:16px;display:flex;flex-direction:column;gap:6px;transition:transform var(--dur-fast,120ms) var(--ease,ease),box-shadow var(--dur-fast,120ms) var(--ease,ease)}
+  .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+  .card h2{margin:0;font-size:var(--fs-lg,16px);display:flex;align-items:center;gap:8px}.card code{font:12px var(--font-mono,monospace);background:var(--surface,#F1F5F9);padding:1px 6px;border-radius:4px}
+  .card p{margin:0;color:var(--text-secondary)}.card .apps{font-size:var(--fs-xs,11px);color:var(--text-muted);margin-top:auto}
+  .card a{color:var(--accent,#2d718b);font-weight:700;text-decoration:none}
+  .new{font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:#1F9D55;color:#fff;border-radius:8px;padding:0 7px;line-height:16px}
+  .use{font:11px var(--font-mono,monospace);background:#0F172A;color:#E2E8F0;padding:10px 12px;border-radius:8px;margin-top:18px;white-space:pre-wrap}
+</style>
+</head>
+<body><div class="page">
+<h1>Sonor Kit</h1>
+<div class="lede">The shared components every Sonor app uses — served, not copied. One line loads the whole kit; the same element works in a vanilla page and in React 19.</div>
+<div class="use">&lt;script type="module" src="https://sonorltd.github.io/sonor-kit/v1/kit.js"&gt;&lt;/script&gt;
+&lt;!-- local dev: ?kit=local on the page URL, or data-kit-base="../sonor-kit/kit/v1/" --&gt;</div>
+<div class="grid" id="cards"></div>
+<script>
+const CARDS = [
+  { name: 'sonor-slot-grid', tag: '<sonor-slot-grid>', icon: 'server', isNew: true, demo: 'slot-grid.html', blurb: 'Racks (U), DIN / KNX enclosures (TE, rows), patch panels — one slot engine: pointer drag with a styled ghost, refuse or ⌥-shove, hover / selected states, keyboard, undo, auto-layout, SVG for the PDF.', apps: 'Engineering (rack, lighting panels, patch panels) · Project Master (rack builder, lighting panels) — B-484' },
+  { name: 'sonor-wq-bar', tag: 'SonorWqBar.init(…)', icon: 'receipt', demo: null, blurb: 'The 🧾 WeQuote control: quote pill, stage, lock, spec-check flags, client links, Engineering save note, actions. Live via realtime.', apps: 'every project-aware app via the project bar' },
+  { name: 'sonor-project-bar', tag: 'SonorProjectBar.init(…)', icon: 'folder', demo: null, blurb: 'Project picker + meta strip shared by every app; mounts the WeQuote control zero-touch.', apps: '25 apps' },
+  { name: 'sonor-modal', tag: 'SonorModal.create(…)', icon: 'panel-left', demo: null, blurb: 'Modal shell: title, body, actions (kind / attrs / disabled), Esc / backdrop, sizes; Lucide icons.', apps: 'Takeoffs · Library' },
+  { name: 'sonor-icons', tag: 'SonorIcons.auto(root)', icon: 'sparkles', demo: null, blurb: '129 Lucide icons as inline SVG; swaps leading emoji on buttons and headings automatically.', apps: '25 apps' },
+  { name: 'components.css', tag: '.s-* / .wqp-* / .chip-*', icon: 'layout-grid', demo: null, blurb: 'Buttons, pills, chips, menus, WQ modal styles, skeleton / empty / motion classes — on the brand scale tokens, in the sonor-kit cascade layer.', apps: '25 apps' }
+];
+document.getElementById('cards').innerHTML = CARDS.map((c) => `<div class="card"><h2>${SonorIcons.has(c.icon) ? SonorIcons.svg(c.icon, { size: 18 }) : ''} ${c.name}${c.isNew ? ' <span class="new">new</span>' : ''}</h2><code>${c.tag.replace(/</g, '&lt;')}</code><p>${c.blurb}</p><div class="apps">Used by: ${c.apps}</div>${c.demo ? `<a href="${c.demo}">Open the demo →</a>` : '<span style="font-size:11px;color:var(--text-muted)">demo page: next tranche</span>'}</div>`).join('');
+</script>
+</div></body></html>

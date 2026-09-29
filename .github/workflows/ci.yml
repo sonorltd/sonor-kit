@@ -1,0 +1,11 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  kit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node --test tests/*.test.mjs
+      - run: test -f kit/v1/manifest.json && node -e "JSON.parse(require('fs').readFileSync('kit/v1/manifest.json'))"

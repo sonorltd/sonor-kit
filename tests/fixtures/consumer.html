@@ -1,0 +1,5 @@
+<!doctype html><html data-theme="slate"><head><meta charset="utf-8"><title>consumer</title>
+<script type="module" src="../../kit/v1/kit.js"></script>
+<style>.btn{padding:99px}</style></head>
+<body><button class="btn" id="b">🧾 Push</button><sonor-slot-grid id="g" size="6" unit="20"></sonor-slot-grid>
+<script>document.addEventListener('sonor:kit-ready', (e) => { window.__ready = e.detail; SonorIcons.auto(document.body); document.getElementById('g').items = [{ id: 'a', start: 1, size: 2, label: 'Amp' }]; });</script></body></html>

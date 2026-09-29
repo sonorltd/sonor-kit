@@ -1,0 +1,12 @@
+{
+  "version": "0.1.0",
+  "built": "2026-09-29T16:59:51.509Z",
+  "modules": [
+    "sonor-icons.js",
+    "sonor-takeoffs-modal.js",
+    "sonor-project-bar.js",
+    "sonor-wq-bar.js",
+    "sonor-slot-grid.js"
+  ],
+  "css": "kit.css"
+}

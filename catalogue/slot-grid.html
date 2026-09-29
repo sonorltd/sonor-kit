@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en" data-theme="slate">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>sonor-slot-grid — Sonor Kit catalogue</title>
+<!-- Catalogue page for <sonor-slot-grid> (B-484): a 12U rack and a 3-row DIN enclosure driven by the SAME element,
+     a palette that drags into either, live stats, undo, auto-layout, SVG export. Loads the kit from ../src (local)
+     or, when served, from the kit channel — see ../kit/v1/kit.js. -->
+<link rel="stylesheet" href="../src/brand.css">
+<link rel="stylesheet" href="../src/sonor-components.css">
+<script src="../src/sonor-icons.js"></script>
+<script src="../src/sonor-slot-grid.js"></script>
+<style>
+  body{margin:0;background:var(--bg-1,#DDE1E7);color:var(--text-primary,#1A1F28);font:14px/1.5 var(--font-ui,'DM Sans',system-ui,sans-serif)}
+  .page{max-width:1240px;margin:0 auto;padding:24px 20px 60px}
+  h1{font-size:var(--fs-2xl,26px);margin:0 0 4px}h2{font-size:var(--fs-lg,16px);margin:22px 0 8px}
+  .lede{color:var(--text-secondary,#475161);max-width:820px}
+  .demo{display:grid;grid-template-columns:200px 1fr 1fr;gap:20px;align-items:start;margin-top:14px}
+  .palette{background:var(--card,#fff);border:1px solid var(--border,#CBD5E1);border-radius:var(--r-lg,8px);padding:10px;position:sticky;top:12px}
+  .palette h3{margin:0 0 8px;font-size:var(--fs-xs,11px);letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+  .pal{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:var(--r-md,6px);border:1px solid var(--border,#CBD5E1);margin:4px 0;cursor:grab;background:var(--surface,#F1F5F9);font-size:12px;transition:transform var(--dur-fast,120ms) var(--ease,ease),box-shadow var(--dur-fast,120ms) var(--ease,ease)}
+  .pal:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}.pal i{width:10px;height:10px;border-radius:2px;flex:none}
+  .pal small{margin-left:auto;color:var(--text-muted)}
+  .card{background:var(--card,#fff);border:1px solid var(--border,#CBD5E1);border-radius:var(--r-lg,8px);padding:14px}
+  .bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+  .bar .s-btn-mini{padding:3px 9px}
+  .hint{font-size:var(--fs-xs,11px);color:var(--text-muted);margin-top:8px}
+  kbd{font:11px var(--font-mono,monospace);padding:0 5px;border:1px solid var(--border);border-radius:4px;background:var(--surface)}
+  #log{font:11px/1.5 var(--font-mono,monospace);color:var(--text-muted);max-height:120px;overflow:auto;margin-top:10px;white-space:pre-wrap}
+  .svgout{margin-top:10px;border:1px dashed var(--border);border-radius:8px;padding:8px;background:#fff;max-width:100%}
+  .svgout svg{max-width:100%;height:auto}
+</style>
+</head>
+<body><div class="page">
+<h1>&lt;sonor-slot-grid&gt;</h1>
+<div class="lede">One engine for anything that lives in slots. A rack is 42 U bottom-up; a DIN enclosure is rows of 18 mm modules (TE) left-to-right; a patch panel is 24 ports. Drag from the palette or between grids. A drop that would overlap is <b>refused</b> (red) — hold <kbd>⌥</kbd> to shove neighbours. Arrow keys nudge, <kbd>⌘Z</kbd> undoes, <kbd>Del</kbd> removes, double-click activates.</div>
+
+<div class="demo">
+  <div class="palette">
+    <h3>Rack kit</h3>
+    <div id="palRack"></div>
+    <h3 style="margin-top:12px">DIN modules</h3>
+    <div id="palDin"></div>
+  </div>
+  <div class="card">
+    <div class="bar"><b>12U wall rack</b><span style="flex:1"></span><button class="s-btn-mini" data-act="auto" data-for="rack">Auto-layout</button><button class="s-btn-mini" data-act="undo" data-for="rack">↶ Undo</button><button class="s-btn-mini" data-act="svg" data-for="rack">SVG</button></div>
+    <sonor-slot-grid id="rack" orientation="vertical" rows="1" size="12" unit="24" width="300" label-origin="1"></sonor-slot-grid>
+    <div class="hint">U1 is at the bottom. Heavy kit low, PDU rear — auto-layout knows the house rules.</div>
+    <div class="svgout" id="svgRack" hidden></div>
+  </div>
+  <div class="card">
+    <div class="bar"><b>Lighting enclosure · 3 × 24 TE</b><span style="flex:1"></span><button class="s-btn-mini" data-act="auto" data-for="din">Auto-layout</button><button class="s-btn-mini" data-act="undo" data-for="din">↶ Undo</button><button class="s-btn-mini" data-act="svg" data-for="din">SVG</button></div>
+    <sonor-slot-grid id="din" orientation="horizontal" rows="3" size="24" unit="18" row-height="64" label-origin="1"></sonor-slot-grid>
+    <div class="hint">Each row is a DIN rail. Module widths come from the product (1 TE MCB, 2 TE RCBO, 4 TE dimmer, 8 TE bus PSU). Phase strip on breakers.</div>
+    <div class="svgout" id="svgDin" hidden></div>
+  </div>
+</div>
+<div id="log"></div>
+
+<script>
+(function () {
+  const RACK_KIT = [
+    { kind: 'device', label: 'Araknis 310 24-port PoE', sub: 'switch · 1U', size: 1, colour: '#1F2937', weightRank: 3 },
+    { kind: 'device', label: 'Araknis 310 router', sub: '1U', size: 1, colour: '#1F2937', weightRank: 2 },
+    { kind: 'device', label: 'Control4 CORE 3', sub: '1U', size: 1, colour: '#8058a1', weightRank: 2 },
+    { kind: 'device', label: 'Triad 16ch amp', sub: '2U · vents', size: 2, colour: '#4bb9d3', weightRank: 6, vent: true },
+    { kind: 'device', label: 'Hikvision NVR 16ch', sub: '2U', size: 2, colour: '#ad9978', weightRank: 5 },
+    { kind: 'device', label: 'APC SMC1500', sub: 'UPS · 2U · heavy', size: 2, colour: '#302f2e', weightRank: 9 },
+    { kind: 'accessory', label: '24-port patch panel', sub: '1U', size: 1, colour: '#475569', weightRank: 1 },
+    { kind: 'accessory', label: 'Brush panel', sub: '1U', size: 1, colour: '#64748B', weightRank: 0 },
+    { kind: 'accessory', label: 'Shelf', sub: '2U', size: 2, colour: '#64748B', weightRank: 1 }
+  ];
+  const PHASE = { L1: '#8B4513', L2: '#111827', L3: '#6B7280' };
+  const DIN_KIT = [
+    { kind: 'din', label: 'MCB 6A', sub: 'L1', size: 1, colour: '#2F6FD6', phase: 'L1' },
+    { kind: 'din', label: 'MCB 10A', sub: 'L2', size: 1, colour: '#2F6FD6', phase: 'L2' },
+    { kind: 'din', label: 'RCBO 16A', sub: 'L3', size: 2, colour: '#1F9D55', phase: 'L3' },
+    { kind: 'din', label: 'C4 8ch dimmer', sub: '4 TE', size: 4, colour: '#f5d05c' },
+    { kind: 'din', label: 'C4 8ch relay', sub: '4 TE', size: 4, colour: '#e37c59' },
+    { kind: 'din', label: 'C4 bus PSU', sub: '8 TE', size: 8, colour: '#8058a1' },
+    { kind: 'din', label: 'DALI gateway', sub: '4 TE', size: 4, colour: '#78ba57' },
+    { kind: 'din', label: 'Terminals', sub: '2 TE', size: 2, colour: '#94A3B8' }
+  ];
+  let seq = 1; const mk = (t) => ({ ...t, id: (t.kind === 'din' ? 'd' : 'r') + (seq++) });
+  const rack = document.getElementById('rack'), din = document.getElementById('din'), log = document.getElementById('log');
+  const say = (m) => { log.textContent = new Date().toLocaleTimeString() + ' ' + m + '\n' + log.textContent.slice(0, 2000); };
+  // faceplates: DIN breakers get a phase strip; dimmers show channels
+  din.renderItem = (i) => `<b>${i.label}</b><small>${i.sub || ''}</small>${i.phase ? `<span style="position:absolute;left:0;right:0;top:0;height:4px;background:${PHASE[i.phase]}"></span>` : ''}`;
+  rack.items = [mk(RACK_KIT[5]), mk(RACK_KIT[3]), mk(RACK_KIT[0]), mk(RACK_KIT[6])].map((it, k) => ({ ...it, start: [0, 3, 6, 7][k] }));
+  din.items = [mk(DIN_KIT[0]), mk(DIN_KIT[0]), mk(DIN_KIT[2]), mk(DIN_KIT[3]), mk(DIN_KIT[5])].map((it, k) => ({ ...it, row: k < 3 ? 0 : 1, start: [0, 1, 2, 0, 4][k] }));
+  // palette → external drag into whichever grid the pointer ends over (each grid decides its own validity)
+  function palette(host, kit, targets) {
+    host.innerHTML = kit.map((t, k) => `<div class="pal" data-k="${k}"><i style="background:${t.colour}"></i>${t.label}<small>${t.size}${targets[0] === rack ? 'U' : 'TE'}</small></div>`).join('');
+    host.addEventListener('pointerdown', (ev) => { const el = ev.target.closest('.pal'); if (!el) return; targets[0].beginExternalDrag(mk(kit[Number(el.dataset.k)]), ev); });
+  }
+  palette(document.getElementById('palRack'), RACK_KIT, [rack]); palette(document.getElementById('palDin'), DIN_KIT, [din]);
+  [rack, din].forEach((g) => {
+    g.addEventListener('sonor:change', (e) => say(g.id + ' · ' + e.detail.reason + ' · used ' + e.detail.stats.used + ' / free ' + e.detail.stats.free));
+    g.addEventListener('sonor:refused', (e) => say(g.id + ' · refused "' + e.detail.item.label + '" at ' + (e.detail.start + 1) + ' (' + e.detail.why + ') — hold ⌥ to shove'));
+    g.addEventListener('sonor:activate', (e) => say(g.id + ' · open "' + e.detail.item.label + '"'));
+  });
+  document.querySelectorAll('[data-act]').forEach((b) => b.addEventListener('click', () => { const g = document.getElementById(b.dataset.for); if (b.dataset.act === 'auto') g.autoLayout(); if (b.dataset.act === 'undo') g.undo(); if (b.dataset.act === 'svg') { const out = document.getElementById(b.dataset.for === 'rack' ? 'svgRack' : 'svgDin'); out.hidden = !out.hidden; out.innerHTML = g.toSvg({ width: 260 }); } }));
+  window.__demo = { rack, din, mk, RACK_KIT, DIN_KIT };
+  if (window.SonorIcons) SonorIcons.auto(document.body, { selector: 'button', size: 12 });
+})();
+</script>
+</div></body></html>

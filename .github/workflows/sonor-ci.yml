@@ -1,0 +1,35 @@
+# sonor-ci.yml — REUSABLE workflow every Sonor repo calls (B-485): unit tests + headless smokes + "no synced copies" check.
+#   In an app repo:  .github/workflows/ci.yml
+#     on: [push, pull_request]
+#     jobs: { ci: { uses: sonorltd/sonor-kit/.github/workflows/sonor-ci.yml@main, with: { app_dir: ".", smokes: "tests/headless" } } }
+name: sonor-ci
+on:
+  workflow_call:
+    inputs:
+      app_dir:   { type: string, default: "." }
+      unit:      { type: string, default: "npm run unit --if-present" }
+      smokes:    { type: string, default: "" }          # folder of *.mjs Playwright smokes (needs a static server on 8766)
+      forbid_copies: { type: boolean, default: false }  # fail when synced copies of kit files are present (after step 2)
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: ${{ inputs.app_dir }} } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Install
+        run: if [ -f package-lock.json ]; then npm ci; elif [ -f package.json ]; then npm i; fi
+      - name: Unit
+        run: ${{ inputs.unit }}
+      - name: No synced copies
+        if: ${{ inputs.forbid_copies }}
+        run: |
+          bad=$(ls data/sonor-icons.js data/sonor-wq-bar.js data/sonor-project-bar.js data/sonor-components.css 2>/dev/null || true)
+          if [ -n "$bad" ]; then echo "synced copies present — the kit is served (B-485): $bad"; exit 1; fi
+      - name: Smokes
+        if: ${{ inputs.smokes != '' }}
+        run: |
+          npx --yes playwright@1.47 install --with-deps chromium >/dev/null
+          (python3 -m http.server 8766 >/dev/null 2>&1 &) ; sleep 1
+          for f in ${{ inputs.smokes }}/*.mjs; do echo "== $f"; CHROME=$(node -e "console.log(require('playwright').chromium.executablePath())") node "$f" || exit 1; done
