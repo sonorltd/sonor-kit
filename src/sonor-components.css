@@ -1,4 +1,4 @@
-/* sonor-components.css — shared component styles per Spine rule S-4.4. (v0.9.0 2026-09-29: WQ modal kit on the brand scale tokens + skeleton / empty / motion, B-478 ph2 + B-479; v0.8.0 2026-09-28: icons / menus / chips kit, B-478)
+/* sonor-components.css — shared component styles per Spine rule S-4.4. (v0.10.0 2026-09-29: graphite dark-theme aliases + re-tints, B-487; v0.9.0 2026-09-29: WQ modal kit on the brand scale tokens + skeleton / empty / motion, B-478 ph2 + B-479; v0.8.0 2026-09-28: icons / menus / chips kit, B-478)
    Synced to every "APP - {slug}"/data/sonor-components.css via sync-everything.sh.
    Edit here ONLY — never edit a per-app copy.
 
@@ -810,3 +810,19 @@ button > .s-icon:first-child, .btn > .s-icon:first-child, a > .s-icon:first-chil
 @keyframes s-fade { from { opacity: 0; } to { opacity: 1; } } @keyframes s-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .s-menu, .sonor-modal { animation: s-rise var(--dur-fast, 120ms) var(--ease, ease) both; }
 @media (prefers-reduced-motion: reduce) { .s-skeleton, .s-fade-in, .s-rise-in, .s-menu, .sonor-modal { animation: none; } }
+
+/* ── v0.10.0 (2026-09-29, B-487) GRAPHITE — the back-end dark theme. Kit chrome reads brand tokens; these lines give
+   the kit its app-vocabulary aliases (apps that define their own win — this file sits in the sonor-kit layer) and
+   re-tint the few fixed light surfaces for [data-theme='graphite']. Service colours untouched. ────────────────────── */
+:root { --card: var(--bg-1, #fff); --surface: var(--bg-2, #F1F5F9); --tint: var(--bg-3, #E2E8F0); --line: var(--border, #CBD5E1); --text: var(--text-primary, #0F172A); --muted: var(--text-muted, #64748B); }
+[data-theme='graphite'] { color-scheme: dark; }
+[data-theme='graphite'] .wqp-g td { background: #2C2C2E; border-top-color: #48484A; }
+[data-theme='graphite'] .wqp-a td { background: #242426; }
+[data-theme='graphite'] .wqp-todo { background: rgba(232,137,43,.12); border-color: rgba(232,137,43,.4); }
+[data-theme='graphite'] .wqp-st-wq { background: #3A3A3C; color: #E5E5EA; } [data-theme='graphite'] .wqp-st-dim { background: #2C2C2E; color: #98989D; } [data-theme='graphite'] .wqp-st-bad { background: rgba(220,38,38,.2); color: #FCA5A5; }
+[data-theme='graphite'] .wqp-spec-row.miss { background: rgba(220,38,38,.18); } [data-theme='graphite'] .wqp-spec-row.diff { background: rgba(232,137,43,.18); }
+[data-theme='graphite'] .wqp-metric { color: #C7C7CC; } [data-theme='graphite'] .wqp-metric b { color: #F5F5F7; }
+[data-theme='graphite'] .swq-slot { background: #3A3A3C; color: #E5E5EA; }
+[data-theme='graphite'] .s-skeleton { background: linear-gradient(90deg, #2C2C2E 25%, #3A3A3C 50%, #2C2C2E 75%); background-size: 200% 100%; }
+[data-theme='graphite'] .pill, [data-theme='graphite'] .badge { border-color: rgba(255,255,255,.14); }
+[data-theme='graphite'] input, [data-theme='graphite'] select, [data-theme='graphite'] textarea { color-scheme: dark; }

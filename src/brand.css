@@ -128,6 +128,32 @@
   --wordmark: #1A1F28;
 }
 
+/* ═══ Graphite Theme ═══ */
+[data-theme='graphite'] {
+  --bg-0: #1C1C1E;
+  --bg-1: #242426;
+  --bg-2: #2C2C2E;
+  --bg-3: #3A3A3C;
+  --bg-4: #48484A;
+  --bg-5: #636366;
+  --bg-6: #F5F5F7;
+  --text-primary: #F5F5F7;
+  --text-secondary: #C7C7CC;
+  --text-muted: #98989D;
+  --text-faint: #5E5E62;
+  --border: rgba(255,255,255,0.10);
+  --border-strong: rgba(255,255,255,0.18);
+  --surface-deep: #141416;
+  --surface-bar: rgba(28,28,30,0.97);
+  --surface-text: #F5F5F7;
+  --surface-hover: #3A3A3C;
+  --cta-bg: #2D718B;
+  --cta-text: #F5F5F7;
+  --cta-hover: #3A8AA8;
+  --scrim: rgba(20,20,22,0.85);
+  --wordmark: #F5F5F7;
+}
+
 /* ═══ UI Scale — type · space · radius · motion · z · shadow (B-478 / B-479) ═══ */
 /* Reference these in apps and the shared kit instead of hard-coded px. */
 :root {
