@@ -23,6 +23,7 @@ The served UI kit. Masters born here live in `src/`; masters still at the worksp
 ## Changelog
 | v | date | change |
 |---|---|---|
+| 0.4.1 | 2026-09-29 | `tests/contrast.mjs` — the contrast + bar-ladder gate (sonor-platform §13); components.css v0.15.0 `.s-paper`, `--ink-mix`, `--ink-on-bright`; `sonor-project-bar.js` on `--surface-text` / ladder tokens (its `--body` ink was invisible in graphite); `sonor-wq-bar.js` v1.4.4 menu ink + slot chip tokenised. |
 | 0.4.0 | 2026-09-29 | `sonor-sortable.js` (B-491, Bryn: "sorting should never be done by typing numbers") + `.s-drag/.s-drag-ghost` styles; components.css v0.14.0 bar-ladder tokens (`--bar-2/3/4`, `.s-bar-*`) + locked=red rule; brand-core v1.3.1 neutral graphite header chrome. 6 unit tests + `sortable.smoke.mjs`. |
 | 0.3.0 | 2026-09-29 | `sonor-theme.js` + components.css v0.10.0 graphite aliases / re-tints; root `sonor-header.css` safety net scoped to `:root:not([data-theme])` (it was overriding every theme's text tokens). |
 | 0.2.0 | 2026-09-29 | `sonor-rack-calc.js` (rack numbers, shared by Engineering / PM / PDF); slot-grid `labels=none` + `flush` for host frames. |
