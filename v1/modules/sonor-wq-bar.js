@@ -35,7 +35,7 @@
 //                  app actions, ↻. Dark (project bar) and light (Takeoffs header) via CSS vars — no cream anywhere.
 (function (global) {
   'use strict';
-  var VERSION = '1.4.2';
+  var VERSION = '1.4.3';
   var WQ_QUOTE_URL = 'https://app.wequote.cloud/sonor-ltd/quote/';   // + <id>/editor
   var LOCK_STAGES = { sent: 1, accepted: 1, complete: 1 };
   var STAGE_LABEL = { in_progress: 'in progress', sent: 'sent', accepted: 'accepted', complete: 'complete', cancelled: 'cancelled', declined: 'declined', draft: 'draft' };
@@ -139,7 +139,7 @@
     var st = String(q.wq_stage || '').toLowerCase();
     return '<span class="swq-pill">#' + _esc(q.quote_no || q.quote_id) + (q.wq_revision ? ' r' + _esc(q.wq_revision) : '')
       + (st ? ' <span class="' + _stageCls(st) + '">' + _esc(STAGE_LABEL[st] || st.replace(/_/g, ' ')) + '</span>' : '')
-      + (_locked(q) ? ' ' + _ico('lock', '🔒', { size: 13, title: 'Locked' }) : '') + (_drift(q).length ? ' <span class="swq-warn swq-drift" title="' + _drift(q).length + ' line(s) with price drift — list price moved since this quote was built, or unpriced">£ ' + _drift(q).length + '</span>' : '') + (q.spec_issues > 0 ? ' <span class="swq-warn" title="' + q.spec_issues + ' spec-check issue(s) — quote does not match the takeoff">' + _ico('triangle-alert', '⚠', { size: 11 }) + ' ' + q.spec_issues + '</span>' : (q.spec_issues === 0 ? ' <span class="swq-ok" title="quote matches the takeoff (spec check)">' + _ico('check', '✓', { size: 13 }) + '</span>' : '')) + '</span>';
+      + (_locked(q) ? ' ' + '<span class="swq-lock" data-locked="true" title="Locked" style="display:inline-flex;align-items:center;padding:1px 4px;border-radius:4px;line-height:1">' + _ico('lock', '🔒', { size: 12 }) + '</span>' : '') + (_drift(q).length ? ' <span class="swq-warn swq-drift" title="' + _drift(q).length + ' line(s) with price drift — list price moved since this quote was built, or unpriced">£ ' + _drift(q).length + '</span>' : '') + (q.spec_issues > 0 ? ' <span class="swq-warn" title="' + q.spec_issues + ' spec-check issue(s) — quote does not match the takeoff">' + _ico('triangle-alert', '⚠', { size: 11 }) + ' ' + q.spec_issues + '</span>' : (q.spec_issues === 0 ? ' <span class="swq-ok" title="quote matches the takeoff (spec check)">' + _ico('check', '✓', { size: 13 }) + '</span>' : '')) + '</span>';
   }
   // v1.4.1 — latest Engineering cloud save noted on the takeoffs-push link row (metadata.engineering)
   function _engHtml() {
