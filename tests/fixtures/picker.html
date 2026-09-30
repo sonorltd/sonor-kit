@@ -1,0 +1,18 @@
+<!doctype html><html data-theme="graphite"><head><meta charset="utf-8"><link rel="stylesheet" href="../../src/brand.css"><link rel="stylesheet" href="../../src/sonor-components.css"><script src="../../src/sonor-catalogue-picker.js"></script></head>
+<body style="padding:20px;background:var(--bg-0)"><sonor-catalogue-picker id="p" placeholder="Search rack kit…"></sonor-catalogue-picker>
+<script>
+const p=document.getElementById('p');window.__picks=[];window.__drags=0;
+p.tabs=[{id:'device',label:'Devices',hint:'Adds to the rack AND the schematic.'},{id:'accessory',label:'Accessories',hint:'Rack only.'},{id:'vertical',label:'Vertical PDU'}];
+p.items=[
+ {id:1,label:'Araknis 310 24-port PoE',manufacturer:'Araknis',model:'AN-310-SW-F-24-POE',service:'09',serviceName:'Network',category:'Switches',kind:'device',heightU:1},
+ {id:2,label:'Araknis 310 router',manufacturer:'Araknis',model:'AN-310-RT-4L2W',service:'09',serviceName:'Network',category:'Routers',kind:'device',heightU:1},
+ {id:3,label:'Control4 CORE 3',manufacturer:'Control4',model:'C4-CORE3',service:'07',serviceName:'Control',category:'Controllers',kind:'device',heightU:1},
+ {id:4,label:'Triad 16ch amp',manufacturer:'Triad',model:'TS-PAMP16-100',service:'02',serviceName:'Audio',category:'Amplifiers',kind:'device',heightU:2},
+ {id:5,label:'Hikvision NVR 16ch',manufacturer:'Hikvision',model:'DS-7616NI-I2',service:'08',serviceName:'Security',category:'Recorders',kind:'device',heightU:2},
+ {id:6,label:'APC SMC1500',manufacturer:'APC',model:'SMC1500I-2UC',service:'10',serviceName:'Infrastructure',category:'UPS',kind:'device',heightU:2},
+ {id:7,label:'24-port patch panel',service:'09',serviceName:'Network',category:'Patch panels',kind:'accessory',heightU:1},
+ {id:8,label:'Brush panel',service:'10',serviceName:'Infrastructure',category:'Panels',kind:'accessory',heightU:1},
+ {id:9,label:'Vertical PDU 8-way',manufacturer:'Middle Atlantic',service:'10',serviceName:'Infrastructure',category:'PDU',kind:'vertical',heightU:0},
+];
+p.addEventListener('sonor:pick',e=>window.__picks.push(e.detail.item.label));p.addEventListener('sonor:pick-drag',()=>window.__drags++);
+</script></body></html>

@@ -156,8 +156,9 @@
   //   first Supabase client it can find (SonorSortable.client() resolver — override per app if yours lives elsewhere).
   //   The container still gets 'sonor:reorder' so an app can refresh its own in-memory rows.
   function findClient() {
-    var cands = [global.SonorSortable && global.SonorSortable._client, global.SonorDB && global.SonorDB.client, global.sonorDb && global.sonorDb.client, global.db && global.db.client, global._supaDb && global._supaDb.client, global.supabaseClient, global.supa, global.S && global.S.db && global.S.db.client];
+    var cands = [global.SonorSortable && global.SonorSortable._client, global.SonorDB && (global.SonorDB.current && global.SonorDB.current.client || global.SonorDB.client), global.sonorDb && global.sonorDb.client, global.db && global.db.client, global._supaDb && global._supaDb.client, global.supabaseClient, global.supa, global.S && global.S.db && global.S.db.client];
     for (var i = 0; i < cands.length; i++) if (cands[i] && typeof cands[i].from === 'function') return cands[i];
+    try { if (global.supabase && global.supabase.createClient && typeof SONOR_SUPABASE_URL !== 'undefined') { var made = global.supabase.createClient(SONOR_SUPABASE_URL, SONOR_SUPABASE_ANON); return made; } } catch (_) {}
     return null;
   }
   async function persist(table, idCol, sortCol, changes) {

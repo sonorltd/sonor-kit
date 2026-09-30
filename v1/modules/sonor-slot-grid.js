@@ -30,7 +30,7 @@
  */
 (function (global) {
   'use strict';
-  const VERSION = '0.1.0';
+  const VERSION = '0.1.1';
 
   // ── pure model ───────────────────────────────────────────────────────────────────────────────────────────────
   function overlaps(a, b) { return a.row === b.row && a.start < b.start + b.size && b.start < a.start + a.size; }
@@ -134,6 +134,7 @@
 .row.h{grid-template-columns:repeat(var(--size),var(--unit));grid-template-rows:var(--row-h,66px);margin-bottom:var(--row-gap,10px)}
 .row.h::after{content:"";position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;background:var(--rail);opacity:.7;pointer-events:none;border-radius:2px}
 .slot{border:0 solid var(--slot-line);position:relative}
+.row.v .tile{grid-column:1}.row.h .tile{grid-row:1}
 .row.v .slot{border-top-width:1px}.row.h .slot{border-left-width:1px}
 .slot[data-state=hover]{background:rgba(255,255,255,.08)}.slot[data-state=valid]{background:rgba(34,197,94,.22)}.slot[data-state=invalid]{background:repeating-linear-gradient(45deg,rgba(220,38,38,.25) 0 4px,transparent 4px 8px)}
 .tile{position:relative;z-index:1;margin:1px;border-radius:var(--r);background:var(--tile,#334155);color:#F4F5F8;padding:3px 6px;overflow:hidden;cursor:grab;display:flex;flex-direction:column;justify-content:center;gap:1px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 1px 2px rgba(0,0,0,.35);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),opacity var(--dur) var(--ease);outline:none}
@@ -206,7 +207,7 @@
         });
         h += '</div>';
       }
-      if (!this._items.length) h += '<div class="empty">Drop items here</div>';
+      if (!this._items.length && !this.hasAttribute('readonly')) h += '<div class="empty">Drop items here</div>';
       frame.innerHTML = h;
       const s = this.stats(); root.querySelector('.stats').innerHTML = (g.rows > 1 ? s.perRow.map((p) => `<span><i></i>Row ${p.row + 1}: <b>${p.used}</b>/${g.size}</span>`).join('') : '') + `<span>Used <b>${s.used}</b> · free <b>${s.free}</b>${s.unplaced ? ` · <b style="color:var(--bad)">${s.unplaced} unplaced</b>` : ''}</span>`;
     }

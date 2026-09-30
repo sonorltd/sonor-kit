@@ -1,0 +1,19 @@
+<!doctype html><html data-theme="graphite"><head><meta charset="utf-8"><link rel="stylesheet" href="../../src/brand.css"><link rel="stylesheet" href="../../src/sonor-components.css">
+<script>
+// stub Supabase client returning one engineered project (RACKS-SSOT shape)
+const STATE = { version: 1, racks: [{ id: 'r1', name: '24U wall rack', location: 'Plant', heightU: 24, cabinetName: 'All-Rack 24U 600', items: [
+  { deviceId: 'sw1', slotU: 20, heightU: 1, side: 'front', mount: 'full' }, { deviceId: 'amp1', slotU: 14, heightU: 2, side: 'front', mount: 'full' },
+  { deviceId: 'ups1', slotU: 0, heightU: 2, side: 'front', mount: 'full' }, { accessoryId: 'pp1', label: '24-port patch panel', slotU: 22, heightU: 1, side: 'front' },
+  { accessoryId: 'pdu1', label: 'Rack PDU', slotU: 1, heightU: 1, side: 'rear' } ] }],
+  nodes: [
+   { id: 'sw1', data: { label: 'Araknis 310 24-port PoE', manufacturer: 'Araknis', modelNumber: 'AN-310', service: 'network', heightU: 1, powerW: 65, btuHr: 221, weightKg: 3.2, depthMm: 280, libMetadata: { poe_budget_w: 190 } } },
+   { id: 'amp1', data: { label: 'Triad 16ch amp', manufacturer: 'Triad', modelNumber: 'TS-PAMP16', service: 'audio', heightU: 2, powerW: 400, weightKg: 9, depthMm: 420, libMetadata: {} } },
+   { id: 'ups1', data: { label: 'APC SMC1500', manufacturer: 'APC', modelNumber: 'SMC1500I-2UC', service: 'structure', heightU: 2, category: 'UPS', watts: 900, weightKg: 24, depthMm: 500, libMetadata: { ups: true, capacity_w: 900, capacity_va: 1500 } } } ],
+  patchPanels: [{ id: 'pp1', rackId: 'r1', name: 'PP-1 · 24 way', ports: 24, assignments: [{ port: 1, label: 'LOUNGE-01', cable: 'Cat6' }, { port: 2, label: 'LOUNGE-02', cable: 'Cat6' }, { port: 5, label: 'WAP-GF-01', cable: 'Cat6' }] }] };
+window.SonorDB = { client: { from: (t) => ({ select: () => ({ eq: () => ({ not: () => ({ order: () => ({ limit: () => ({ maybeSingle: async () => ({ data: { id: 'd1', title: 'Demo', eng_state: STATE, eng_revision: 7, eng_updated_at: '2026-09-30T08:00:00Z' }, error: null }) }) }) }) }) }) }) } };
+window.__SONOR_BRAND__ = { appUrls: { hosted: { engineering: 'https://sonorltd.github.io/sonor-engineering/' } } };
+</script>
+<script src="../../src/sonor-slot-grid.js"></script><script src="../../src/sonor-rack-calc.js"></script><script src="../../src/sonor-rack-data.js"></script>
+</head><body style="padding:20px;background:var(--bg-0);max-width:900px">
+<sonor-rack-view id="v" project-id="11111111-1111-1111-1111-111111111111" numbers patch width="260"></sonor-rack-view>
+</body></html>

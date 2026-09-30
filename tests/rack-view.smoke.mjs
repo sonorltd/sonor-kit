@@ -1,0 +1,8 @@
+// rack-view.smoke.mjs — <sonor-rack-view> renders the engineered racks read-only from eng_state: elevations (front/rear), numbers, patch panel, edit link.
+import { chromium } from '@playwright/test';
+const b = await chromium.launch({ executablePath: process.env.CHROME || '/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell', args: ['--no-sandbox'] });
+const p = await b.newPage({ viewport: { width: 960, height: 1100 } }); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
+await p.goto((process.env.KIT_URL || 'http://localhost:8770') + '/tests/fixtures/rack-view.html'); await p.waitForTimeout(800);
+console.log(await p.evaluate(() => { const v = document.getElementById('v'); const grids = [...v.querySelectorAll('sonor-slot-grid')]; return { racks: v.querySelectorAll('.rv-rack').length, sides: grids.map((g) => g.dataset.side + ':' + g.items.length + ' items ' + g.items.map((i) => i.label.slice(0, 10) + '@' + i.start).join(',')), readonly: grids.every((g) => g.hasAttribute('readonly')), tiles: v.querySelectorAll('.rv-tile').length, power: v.querySelector('.rv-tile:nth-child(2) .rv-v')?.textContent, heat: v.querySelector('.rv-tile:nth-child(3) .rv-v')?.textContent, ups: v.querySelector('.rv-tile:nth-child(7) .rv-v')?.textContent, ports: v.querySelectorAll('.rv-port').length, portsOn: v.querySelectorAll('.rv-port.on').length, edit: v.querySelector('.rv-edit')?.href }; }));
+await p.screenshot({ path: process.env.SHOT || '/tmp/claude-0/-home-claude/e4a4e309-50af-5982-9800-dfb15970bc52/scratchpad/rack-view.png', fullPage: true });
+console.log('ERRORS', errs); await b.close();

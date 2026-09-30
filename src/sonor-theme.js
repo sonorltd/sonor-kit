@@ -25,7 +25,7 @@
  */
 (function (global) {
   'use strict';
-  var VERSION = '0.3.2';
+  var VERSION = '0.3.3';
   var KEY = 'sonor-theme', COOKIE = 'sonor_theme';
   var DARK = 'graphite', LIGHT = 'slate';
   var doc = global.document; if (!doc) { global.SonorTheme = { VERSION: VERSION }; return; }
@@ -35,7 +35,12 @@
 
   function readCookie() { var m = doc.cookie.match(/(?:^|;\s*)sonor_theme=([a-z-]+)/); return m ? m[1] : null; }
   function writeCookie(v) { try { var d = new Date(Date.now() + 365 * 864e5).toUTCString(); doc.cookie = COOKIE + '=' + v + '; expires=' + d + '; path=/; SameSite=Lax' + (/github\.io$/.test(location.hostname) ? '; domain=.github.io' : ''); } catch (_) {} }
-  function stored() { try { return localStorage.getItem(KEY) || readCookie(); } catch (_) { return readCookie(); } }
+  // v0.3.3 — only the two family themes are valid choices. Legacy values left behind by older per-app toggles
+  // ('dark' / 'nocturne' → graphite, 'light' / 'earthy' → slate, anything else → graphite) used to land on <html>
+  // verbatim: brand.css painted a legacy palette while the kit's [data-theme='graphite'] bar ladder never matched,
+  // so bars + table heads went light on a dark page (Bryn's Board screenshot 2026-09-30 08:28).
+  function normalise(v) { if (!v) return null; v = String(v).toLowerCase(); if (v === DARK || v === LIGHT) return v; if (v === 'light' || v === 'earthy' || v === 'slate-light') return LIGHT; return DARK; }
+  function stored() { var raw; try { raw = localStorage.getItem(KEY) || readCookie(); } catch (_) { raw = readCookie(); } var v = normalise(raw); if (v && v !== raw) { try { localStorage.setItem(KEY, v); } catch (_) {} writeCookie(v); } return v; }
   function get() { return html.getAttribute('data-theme') || LIGHT; }
   function set(name, opts) {
     if (!name) return get();
@@ -107,7 +112,7 @@
   doc.addEventListener('sonor:theme', function () { setTimeout(ladder, 0); });
 
   // apply the remembered theme NOW (before first paint when loaded in <head>)
-  if (!locked) { var s = stored(); if (s && s !== get()) set(s, { silent: true }); else html.style.colorScheme = get() === DARK ? 'dark' : 'light'; }
+  if (!locked) { var s = stored() || normalise(get()); if (s && s !== get()) set(s, { silent: true }); else html.style.colorScheme = get() === DARK ? 'dark' : 'light'; }
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', function () { autoMount(); ladderLater(); }); else { autoMount(); ladderLater(); }
 
   global.SonorTheme = { VERSION: VERSION, get: get, set: set, toggle: toggle, mount: mount, ladder: ladder, DARK: DARK, LIGHT: LIGHT };
