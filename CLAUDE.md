@@ -1,6 +1,6 @@
 # sonor-kit — Project Notes
 
-**Current version: v0.7.0** (v1/manifest.json)
+**Current version: v0.7.4** (VERSION · v1/manifest.json)
 > Spine version: 1.4 (the kit IS the served Spine v1.4 surface — B-485) · Spine v1.4 (B-485 cohesion plan: `../reports/COHESION-PLAN_2026-09-29.md`).
 
 ## What this is
@@ -26,6 +26,7 @@ The served UI kit. Masters born here live in `src/`; masters still at the worksp
 ## Changelog
 | v | date | change |
 |---|---|---|
+| 0.7.4 | 2026-10-17 | `v1/modules/sonor-project-bar.js` → **1.14.0** (served module was 1.12.0; byte-identical to the root master): 1.13.0 picker re-fetch on open + 1.14.0 `decorateOption` / `beforeChange` / `showNew` init hooks. VERSION, manifest and this banner reconciled (were 0.7.3 / 0.7.3 / 0.7.0; 0.7.1–0.7.3 shipped without changelog rows). |
 | 0.7.0 | 2026-09-30 | **RACKS-SSOT + catalogue picker (B-504).** New modules `sonor-rack-data.js` (`<sonor-rack-view>`) and `sonor-catalogue-picker.js` (`<sonor-catalogue-picker>`); `sonor-slot-grid.js` v0.1.1 (tiles pinned to column/row 1 — they auto-placed into an implicit second column; no drop hint when readonly); `sonor-sortable.js` resolver uses `SonorDB.current`; `data/sonor-components.css` v0.18.0 (rack view + picker CSS). 10 modules. `build-kit.sh` MODULES updated. Mirror: `sync-everything.sh` now rsyncs `v1/` into every app's `data/kit/` (+ Engineering `public/kit/`) and every kit `<script>` carries `onerror` → the mirror (sonor-platform §22) — a dead Pages URL is invisible. |
 | 0.6.4 | 2026-09-29 | `sonor-theme.js` v0.3.2 — ladder finds bars by SHAPE (full-width opaque strips under the header; nested collapse; `body > header` counts as the header for own-chrome apps like C-Bus); `data/sonor-components.css` v0.17.0 **§18 hover/focus law** (one wash, no lifts, focus ring, reduced-motion); `.s-paper` now re-declares `--ink-mix` / `--ink-on-bright`; `tests/contrast.mjs` skips `[data-decorative]` / `[aria-hidden]`. Spec sweep over 26 pages (session log). |
 | 0.6.0 | 2026-09-29 | `sonor-theme.js` v0.3.0 — **positional bar ladder** (`SonorTheme.ladder()`, sonor-platform §9): full-width bars under the header take --bar-2/3/4 in visual order (inline background), `data-bar-fixed` opts out. Cause: Packs stacks project-bar-first and rendered the ladder inverted (Bryn 22:39 "still doesn't look right"). New gate `tests/ladder.smoke.mjs` (fails if any bar is not lighter than the one above). Also `data/sonor-header.css` ≤480px phone rules (synced, not in kit.css). |
