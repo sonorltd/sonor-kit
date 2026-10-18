@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" data-theme="graphite">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>sonor-library-bar — Sonor Kit catalogue</title>
+<!-- Catalogue page for <sonor-library-bar> (kit v0.8.0): the grouped service palette. Left = the Engineering preset (list
+     rows, spec badges, live status + reload, collapsed-to-rail by default in the app). Right = the Takeoffs preset (3-up
+     tiles with shape glyphs, S-4.17 NN.sub tiers, floor/project usage-count badges patched live, Recent, Used in this
+     project, WeQuote-linked filter, mode lock). Masters load from ../src; ?theme=slate shows the light fallback. -->
+<script src="../src/sonor-theme.js"></script>
+<link rel="stylesheet" href="../src/brand.css">
+<link rel="stylesheet" href="../src/sonor-components.css">
+<link rel="stylesheet" href="../src/sonor-library-bar.css">
+<script src="../src/sonor-library-bar.js"></script>
+<script src="library-bar-sample.js"></script>
+<style>
+  body{margin:0;background:var(--bg-0);color:var(--text-primary);font:14px/1.5 var(--font-ui,'DM Sans',system-ui,sans-serif)}
+  .page{max-width:1240px;margin:0 auto;padding:24px 16px 60px}
+  h1{font-size:var(--fs-2xl,26px);margin:0 0 4px}h2{font-size:var(--fs-md,13px);margin:0 0 8px;color:var(--text-secondary);font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  .lede{color:var(--text-secondary);max-width:860px}
+  .demos{display:flex;gap:24px;flex-wrap:wrap;margin-top:18px;align-items:flex-start}
+  .demo{display:flex;flex-direction:column}
+  .frame{display:flex;height:780px;border:1px solid var(--border-strong);border-radius:var(--r-lg,8px);overflow:hidden;background:var(--bg-0)}
+  .stage{width:200px;padding:12px;font-size:var(--fs-xs,11px);color:var(--text-muted);display:flex;flex-direction:column;gap:8px}
+  .stage b{color:var(--text-primary)}
+  .log{font:11px/1.45 var(--font-mono,monospace);white-space:pre-wrap;overflow:auto;flex:1;color:var(--text-secondary)}
+  .drop{border:1px dashed var(--border-strong);border-radius:var(--r-md,6px);padding:14px 8px;text-align:center}
+  .drop.over{border-color:var(--accent);color:var(--text-primary)}
+  .row{display:flex;gap:6px;flex-wrap:wrap}
+  .use{font:11px var(--font-mono,monospace);background:var(--bg-1);color:var(--text-secondary);border:1px solid var(--border);padding:10px 12px;border-radius:8px;margin-top:18px;white-space:pre-wrap}
+  .wq{display:inline-block;padding:0 4px;border-radius:3px;font:700 8px/1.4 var(--font-mono,monospace);background:color-mix(in srgb,var(--status-info) 22%,transparent);color:color-mix(in srgb,var(--status-info) 62%,var(--text-primary))}
+</style>
+</head>
+<body><div class="page">
+<h1>&lt;sonor-library-bar&gt;</h1>
+<div class="lede">The grouped service palette for <b>any list of library items</b> — blocks, devices, catalogue rows. Services 01 → 10 in the workspace order, optional sub-groups (S-4.17 tiers or a category), service filter chips, search that opens every group, expand / collapse all, a collapsible rail that remembers itself, keyboard tree navigation, drag hand-off, and slots for every app extra (badges, glyphs, pinned sections, tools) that update live without a re-mount.</div>
+<div class="row" style="margin-top:12px"><button type="button" class="s-btn-mini" id="themeBtn">◐ graphite / slate</button></div>
+
+<div class="demos">
+  <div class="demo"><h2>Engineering preset · list</h2>
+    <div class="frame"><sonor-library-bar id="eng"></sonor-library-bar>
+      <div class="stage"><div class="drop" id="drop">Drag a row here<br>(HTML5 drag)</div><div>Double-click places · Enter picks.</div><div class="log" id="engLog"></div></div></div>
+  </div>
+  <div class="demo"><h2>Takeoffs preset · tiles + extras</h2>
+    <div class="frame"><sonor-library-bar id="tko"></sonor-library-bar>
+      <div class="stage">
+        <div><b>Live counts</b> — badges patch in place via <code>refreshBadges()</code>, no re-mount.</div>
+        <div class="row"><button type="button" class="s-btn-mini" id="place">+ place picked</button><button type="button" class="s-btn-mini" id="floor">switch floor</button></div>
+        <div class="row"><button type="button" class="s-btn-mini" id="mode">CCTV mode</button></div>
+        <div class="log" id="tkoLog"></div></div></div>
+  </div>
+  <div class="demo"><h2>Rail (collapsed)</h2>
+    <div class="frame" style="height:300px"><sonor-library-bar id="rail"></sonor-library-bar><div class="stage" style="width:120px">Click the rail to open. State remembered per <code>storageKey</code>.</div></div>
+  </div>
+</div>
+
+<div class="use">// vanilla
+const bar = SonorLibraryBar.mount(document.getElementById('palette'), {
+  items, storageKey: 'engineering-library', collapsed: true,
+  getSubgroup: SonorLibraryBar.subgroups.byTier(),          // "01.1 · Speakers" … or byField('category')
+  status: { tier: 'live', count: items.length }, onRefresh: () => reload(),
+  getItemBadges: (it) => [it.heightU &amp;&amp; { label: it.heightU + 'U' }, it.ports &amp;&amp; { label: it.ports + 'p', tone: 'ok' }].filter(Boolean),
+  drag: 'html5', dragType: 'application/sonor-template', pickOn: 'dblclick', onPick: (it) => place(it.id),
+});
+bar.setItems(next);  bar.refreshBadges();  bar.setService('08', { lock: true });  bar.setActive(id);
+
+// React 19: the element is the boundary
+const ref = useRef(); useEffect(() => { SonorLibraryBar.mount(ref.current, opts); }, []);
+useEffect(() => { ref.current.querySelector('sonor-library-bar')?.setItems(items); }, [items]);
+return &lt;div ref={ref} /&gt;;</div>
+</div>
+
+<script>
+(function () {
+  const S = window.LIBBAR_SAMPLE;
+  const qs = new URLSearchParams(location.search);
+  if (qs.get('theme') && window.SonorTheme) SonorTheme.set(qs.get('theme'));
+  document.getElementById('themeBtn').onclick = () => window.SonorTheme && SonorTheme.toggle();
+  if (qs.get('fresh')) { try { Object.keys(localStorage).filter(k => k.startsWith('demo-')).forEach(k => localStorage.removeItem(k)); } catch (_) {} }
+
+  // ── Engineering preset ──
+  const engLog = document.getElementById('engLog'); const log = (el, s) => { el.textContent = s + '\n' + el.textContent; };
+  const eng = SonorLibraryBar.mount(document.getElementById('eng'), {
+    items: S.filter(i => i.category !== 'luminaire' && i.category !== 'led'),     // Engineering: no light fittings
+    storageKey: 'demo-eng', collapsed: false,
+    getSubgroup: SonorLibraryBar.subgroups.byField('category', { prefix: true }),
+    status: { tier: 'live', count: S.length - 2, title: 'Live from device_catalogue + misc_catalogue.' },
+    onRefresh: () => new Promise(r => setTimeout(r, 600)),
+    getItemBadges: (it) => [it.heightU && { label: it.heightU + 'U' }, it.powerW && { label: it.powerW + 'W', tone: 'faint' }, it.ports && { label: it.ports + 'p', tone: 'ok' }].filter(Boolean),
+    drag: 'html5', dragType: 'application/sonor-template', pickOn: 'dblclick',
+    onPick: (it, ev, via) => log(engLog, 'place ' + it.label + ' (' + via + ')'),
+  });
+  const drop = document.getElementById('drop');
+  drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); log(engLog, 'drop ' + e.dataTransfer.getData('application/sonor-template')); });
+
+  // ── Takeoffs preset ──
+  const tkoLog = document.getElementById('tkoLog');
+  const floors = { GF: { 'cin-spk-lcr': 3, 'net-wap': 4, 'lit-dl': 18, 'sec-cam': 2 }, '1F': { 'net-wap': 3, 'lit-dl': 22, 'aud-ceil': 6 } };
+  let floor = 'GF', scope = 'floor', wqOnly = false, picked = null;
+  const countsFor = (sc) => { const m = {}; Object.entries(floors).forEach(([f, map]) => { if (sc === 'floor' && f !== floor) return; Object.entries(map).forEach(([k, n]) => { m[k] = (m[k] || 0) + n; }); }); return m; };
+  const glyph = (it, ctx) => {
+    const c = ctx.colour, g = (it.short_code || '●').slice(0, 3), sh = it.shape || 'circle';
+    const shape = sh === 'square' ? '<rect x="1.5" y="1.5" width="17" height="17" rx="3"/>' : sh === 'hex' ? '<polygon points="10,1 18,5.5 18,14.5 10,19 2,14.5 2,5.5"/>' : sh === 'diamond' ? '<polygon points="10,0.5 19.5,10 10,19.5 0.5,10"/>' : sh === 'triangle' ? '<polygon points="10,1.5 19,18 1,18"/>' : sh === 'pill' ? '<rect x="0.5" y="4.5" width="19" height="11" rx="5.5"/>' : '<circle cx="10" cy="10" r="9"/>';
+    return `<svg viewBox="0 0 20 20" width="22" height="22"><g style="fill:${c};stroke:var(--bg-0);stroke-width:1.2">${shape}</g><text x="10" y="10.6" text-anchor="middle" dominant-baseline="central" font-size="${g.length > 2 ? 5.6 : 7}" font-weight="700" style="fill:var(--bg-0)">${ctx.esc(g)}</text></svg>`;
+  };
+  const scopeSel = document.createElement('select'); scopeSel.title = 'Usage badges — this floor or the whole project';
+  scopeSel.innerHTML = '<option value="floor">№ floor</option><option value="project">№ project</option>';
+  scopeSel.onchange = () => { scope = scopeSel.value; tko.refreshBadges(); };
+  const tko = SonorLibraryBar.mount(document.getElementById('tko'), {
+    items: S, storageKey: 'demo-tko', layout: 'grid', gridColumns: 3, title: 'Block library', chips: false,
+    placeholder: 'Search blocks (code / label / service)', persistSearch: true, showEmptyServices: true, emptyGroupText: 'No blocks',
+    getSubgroup: SonorLibraryBar.subgroups.byTier(),
+    getSearchText: (it) => [it.label, it.short_code, it.id, it.manufacturer, it.model, it.sub_name].join(' '),
+    filter: (it) => !wqOnly || it.wq_linked,
+    renderIcon: glyph,
+    getItemAttrs: (it) => it.category === 'led' ? { 'data-sizeable': 'true', title: it.label + ' — resizable on canvas' } : null,
+    getItemBadges: (it) => { const n = countsFor(scope)[it.id] || 0; return [n && { count: n, tone: 'accent', corner: true, title: n + ' placed ' + (scope === 'project' ? 'across the project' : 'on this floor') }, it.wq_linked && { label: 'WQ', tone: 'info', title: 'Linked to a WeQuote product' }].filter(Boolean); },
+    getGroupBadges: (g) => { const m = countsFor('floor'); const n = g.items.reduce((a, it) => a + (m[it.id] || 0), 0); return n ? [{ count: n, tone: 'accent', title: n + ' placed on this floor' }] : []; },
+    headerExtra: scopeSel,
+    recent: { max: 8, layout: 'grid' },
+    sections: [{ id: 'used', label: 'Used in this project', layout: 'grid', defaultOpen: true,
+      getItems: () => { const m = countsFor('project'); return S.filter(it => m[it.id]).sort((a, b) => m[b.id] - m[a.id]); },
+      summary: (items) => { const m = countsFor('project'); return items.length + ' blocks · ' + items.reduce((a, it) => a + m[it.id], 0) + ' placed'; },
+      getItemBadges: (it) => { const n = countsFor('project')[it.id]; return [{ count: n, tone: 'accent', corner: true, title: n + ' placed across the project' }]; } }],
+    tools: [{ id: 'wq', label: '<span class="wq">WQ</span> linked', title: 'Show only blocks linked to a WeQuote product', pressed: false,
+      onClick: (bar, t) => { wqOnly = t.pressed = !t.pressed; bar.update({}); } }],
+    toolsNote: 'Labels, services and cable defaults are edited in the Library app',
+    onPick: (it, ev, via) => { picked = it; log(tkoLog, 'place mode: ' + it.label + ' (' + via + ')'); },
+  });
+  document.getElementById('place').onclick = () => { if (!picked) return log(tkoLog, 'pick a block first'); floors[floor][picked.id] = (floors[floor][picked.id] || 0) + 1; tko.refreshBadges(); log(tkoLog, 'placed ' + picked.label + ' on ' + floor); };
+  document.getElementById('floor').onclick = () => { floor = floor === 'GF' ? '1F' : 'GF'; tko.refreshBadges(); log(tkoLog, 'floor → ' + floor); };
+  let mode = false; document.getElementById('mode').onclick = () => { mode = !mode; tko.setService(mode ? '08' : null, { lock: true }); log(tkoLog, mode ? 'CCTV mode: service 08 only' : 'mode off'); };
+
+  // ── rail ──
+  SonorLibraryBar.mount(document.getElementById('rail'), { items: S, storageKey: 'demo-rail', collapsed: true });
+  window.__libbar = { eng, tko };
+})();
+</script>
+</body></html>
