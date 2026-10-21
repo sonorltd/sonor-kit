@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" data-theme="graphite">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>sonor-links — Sonor Kit catalogue</title>
+<!-- Catalogue page for <sonor-links-banner> + <sonor-links-button> (kit v0.9.0): which version of each upstream app this
+     page is linked / locked to, and a warning when one changed. Data here is a fake SonorRevisions (links-sample.js);
+     apps load root sonor-revisions.js ≥ 1.1.0. ?theme=slate shows the light fallback. -->
+<script src="../src/sonor-theme.js"></script>
+<link rel="stylesheet" href="../src/brand.css">
+<link rel="stylesheet" href="../src/sonor-components.css">
+<link rel="stylesheet" href="../src/sonor-links.css">
+<script src="links-sample.js"></script>
+<script src="../src/sonor-links.js"></script>
+<style>
+  body{margin:0;background:var(--bg-0);color:var(--text-primary);font:14px/1.5 var(--font-ui,'DM Sans',system-ui,sans-serif)}
+  .page{max-width:1100px;margin:0 auto;padding:24px 16px 60px}
+  h1{font-size:var(--fs-2xl,26px);margin:0 0 4px}
+  .lede{color:var(--text-secondary);max-width:860px}
+  .app{margin-top:18px;border:1px solid var(--border-strong);border-radius:var(--r-lg,8px);background:var(--bg-0);min-height:360px}
+  .tabs{display:flex;align-items:center;gap:16px;padding:6px 12px;background:var(--bg-1);border-bottom:1px solid var(--border);border-radius:var(--r-lg,8px) var(--r-lg,8px) 0 0}
+  .tabs span{color:var(--text-secondary)} .tabs .rail{margin-left:auto}
+  .work{padding:16px;color:var(--text-muted)}
+  .log{font:11px/1.45 var(--font-mono,monospace);white-space:pre-wrap;color:var(--text-secondary);margin-top:12px}
+  .use{font:11px var(--font-mono,monospace);background:var(--bg-1);color:var(--text-secondary);border:1px solid var(--border);padding:10px 12px;border-radius:8px;margin-top:18px;white-space:pre-wrap}
+</style>
+</head>
+<body><div class="page">
+<h1>sonor-links</h1>
+<div class="lede">Linked to / locked to, and "upstream changed" warnings. One row per upstream change: <b>Review</b> shows what moved, <b>Update</b> runs the app's own re-read and records the new link, <b>Keep locked</b> pins the version, ✕ keeps it as is until the next change. Unreachable sources show a grey chip, never a warning.</div>
+<div class="app">
+  <div class="tabs"><span>Racks</span><span>Schematic</span><span>Reports</span><span class="rail"><sonor-links-button id="btn" app="engineering" project-id="demo" sources="takeoffs,netmap,library,amps,cablepkgs"></sonor-links-button></span></div>
+  <sonor-links-banner id="ban" app="engineering" project-id="demo" sources="takeoffs,netmap,library,amps,cablepkgs"></sonor-links-banner>
+  <div class="work">Work area<div class="log" id="log"></div></div>
+</div>
+<div class="use">&lt;sonor-links-banner app="packs" sources="engineering,library"&gt;&lt;/sonor-links-banner&gt;   under the tab bar
+&lt;sonor-links-button app="packs" sources="engineering,library"&gt;&lt;/sonor-links-button&gt;   in the actions rail
+banner.onUpdate = async (status) =&gt; { await reloadRacks(); return { counts: { racks: 3 } }; };   // then link(…, {via:'update'})
+Needs window.SonorRevisions ≥ 1.1.0 (root sonor-revisions.js). project-id falls back to SonorProjectBar.getActiveId().</div>
+</div>
+<script>
+  const log = (m) => { document.getElementById('log').textContent += m + '\n'; };
+  const ban = document.getElementById('ban');
+  ban.onUpdate = async (s) => { log('Update ' + s.source + ' — app re-reads upstream, then the link is recorded'); return {}; };
+  document.addEventListener('sonor:links-status', (e) => log('status: ' + e.detail.statuses.filter((s) => s.attention).length + ' need attention'));
+</script>
+</body>
+</html>
